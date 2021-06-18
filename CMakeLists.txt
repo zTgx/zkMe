@@ -1,0 +1,38 @@
+SET(PROJECTNAME example)
+PROJECT(${PROJECTNAME})
+
+CMAKE_MINIMUM_REQUIRED(VERSION 3.16.3)
+
+INCLUDE_DIRECTORIES("./src")
+# add_executable(${PROJECTNAME} src/main.cpp)
+
+AUX_SOURCE_DIRECTORY(./src DIR_MAIN_SRCS)
+ADD_EXECUTABLE(${PROJECTNAME} ${DIR_MAIN_SRCS})
+
+# Enable ExternalProject CMake module
+include(ExternalProject)
+
+# Set default ExternalProject root directory
+set_directory_properties(PROPERTIES EP_PREFIX ${CMAKE_BINARY_DIR}/Rust)
+
+# Add rust_example as a CMake target
+ExternalProject_Add(
+    rust_example
+    DOWNLOAD_COMMAND ""
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND cargo build COMMAND cargo build --release
+    BINARY_DIR "${CMAKE_SOURCE_DIR}/src/rust"
+    INSTALL_COMMAND ""
+    LOG_BUILD ON)
+
+# Create dependency of Example on rust_example
+add_dependencies(${PROJECTNAME} rust_example)
+
+# Specify Example's link libraries
+target_link_libraries(${PROJECTNAME}
+    debug "${CMAKE_SOURCE_DIR}/src/rust/target/debug/librustbellman.a"
+    optimized "${CMAKE_SOURCE_DIR}/src/rust/target/release/librustbellman.a")
+
+# set_target_properties(Example PROPERTIES CXX_STANDARD 11 CXX_STANDARD_REQUIRED ON)
+TARGET_LINK_LIBRARIES(${PROJECTNAME} -lpthread)
+TARGET_LINK_LIBRARIES(${PROJECTNAME} -ldl)
