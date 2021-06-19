@@ -1,2 +1,4 @@
 # bellman-cpp-rust
-bellman example : using rust in a cpp project with cmake
+
+[bellman](https://crates.io/crates/bellman) is a crate for building zk-SNARK circuits.  
+
