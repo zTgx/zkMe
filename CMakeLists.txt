@@ -30,7 +30,8 @@ ExternalProject_Add(
 # Create dependency of Example on librustbellman
 add_dependencies(${PROJECTNAME} librustbellman)
 
-message(${CMAKE_SOURCE_DIR})
+# message(${CMAKE_SOURCE_DIR})
+
 # Specify Example's link libraries
 target_link_libraries(${PROJECTNAME}
     debug "${CMAKE_SOURCE_DIR}/src/rust/target/debug/librustbellman.a"
