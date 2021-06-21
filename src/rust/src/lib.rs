@@ -1,6 +1,6 @@
 #[no_mangle]
 pub extern "C" fn hello_world() {
-    println!("Hello world from bellman.");
+    println!("Hello world from Bellman.");
 }
 
 #[cfg(test)]
@@ -10,3 +10,7 @@ mod tests {
         assert_eq!(2 + 2, 4);
     }
 }
+
+pub mod prove;
+pub mod verify;
+pub mod proof;

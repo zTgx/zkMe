@@ -13,21 +13,24 @@ ADD_EXECUTABLE(${PROJECTNAME} ${DIR_MAIN_SRCS})
 include(ExternalProject)
 
 # Set default ExternalProject root directory
-set_directory_properties(PROPERTIES EP_PREFIX ${CMAKE_BINARY_DIR}/Rust)
+set_directory_properties(PROPERTIES EP_PREFIX ${CMAKE_SOURCE_DIR}/src/rust)
 
-# Add rust_example as a CMake target
+# Add librustbellman as a CMake target
 ExternalProject_Add(
-    rust_example
+    librustbellman
     DOWNLOAD_COMMAND ""
     CONFIGURE_COMMAND ""
     BUILD_COMMAND cargo build COMMAND cargo build --release
+    UPDATE_COMMAND cargo build COMMAND cargo build --release
     BINARY_DIR "${CMAKE_SOURCE_DIR}/src/rust"
     INSTALL_COMMAND ""
+    ALWAYS TRUE
     LOG_BUILD ON)
 
-# Create dependency of Example on rust_example
-add_dependencies(${PROJECTNAME} rust_example)
+# Create dependency of Example on librustbellman
+add_dependencies(${PROJECTNAME} librustbellman)
 
+message(${CMAKE_SOURCE_DIR})
 # Specify Example's link libraries
 target_link_libraries(${PROJECTNAME}
     debug "${CMAKE_SOURCE_DIR}/src/rust/target/debug/librustbellman.a"
