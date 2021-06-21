@@ -13,6 +13,5 @@ class Verifier {
         Verifier& operator=(Verifier&&);
     
     public:
-        static Verifier Strict();
-        bool verify(const Transaction&);
+        static bool Verify(const Transaction&);
 };

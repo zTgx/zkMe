@@ -1,11 +1,7 @@
 #include <verifier.h>
 
-Verifier Verifier::Strict() {
-    return Verifier();
-}
-
-bool Verifier::verify(const Transaction& tx) {
+bool Verifier::Verify(const Transaction& tx) {
     (void)tx;
-    
+
     return true;
 }

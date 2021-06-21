@@ -1,17 +1,16 @@
-#include <main.h>
 #include <rust/include/rust_header.h>
 #include <verifier.h>
 #include <transaction.h>
+#include <iostream>
 
 int main(int argc, char** argv) {
-    std::cout << "Main." << std::endl;
-
     hello_world();
 
+    // transaction needed to be verified
     auto tx = Transaction::Mock();
 
-    auto verifier = Verifier::Strict();
-    if (!verifier.verify(tx)) {
+    // verify
+    if (!Verifier::Verify(tx)) {
         std::cout << "verify failed." << std::endl;
         return -1;
     }
