@@ -10,4 +10,5 @@ path = "src/lib.rs"
 crate-type = ["staticlib"]
 
 [dependencies]
-bellman = "0.8"
+bellman = "0.10"
+bls12_381 = "0.5"
