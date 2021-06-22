@@ -8,7 +8,11 @@ impl ProvingContext {
         }
     }
 
+    pub fn spend_proof(&self) -> bool {
+        println!("spend proof.");
 
+        true
+    }
 }
 
 pub struct VerificationContext {}

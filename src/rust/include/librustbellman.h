@@ -10,7 +10,7 @@ extern "C" {
     void * librust_proving_ctx_init(); 
 
     /// This function constructs a proof given the necessary witness information. 
-    bool librust_proof();
+    bool librust_proof(void *);
 
     // Free a proving context.
     void librust_proving_ctx_free(void *);

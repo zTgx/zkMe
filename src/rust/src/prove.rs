@@ -10,8 +10,10 @@ pub extern "C" fn librust_proving_ctx_init() -> *mut ProvingContext {
 }
 
 #[no_mangle]
-pub extern "C" fn librust_proof() -> bool {
-    true
+pub extern "C" fn librust_proof(ctx: *mut ProvingContext) -> bool {
+    let ret = unsafe { &mut *ctx }.spend_proof();
+
+    ret
 }
 
 #[no_mangle]
