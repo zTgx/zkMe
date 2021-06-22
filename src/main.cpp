@@ -1,4 +1,4 @@
-#include <rust/include/rust_header.h>
+#include <rust/include/librustbellman.h>
 #include <verifier.h>
 #include <transaction.h>
 #include <iostream>

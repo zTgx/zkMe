@@ -14,7 +14,7 @@ mod tests {
 extern crate bellman;
 extern crate bls12_381;
 
-
+pub mod librustbellman;
 pub mod prove;
 pub mod verify;
 pub mod proof;

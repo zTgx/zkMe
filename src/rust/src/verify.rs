@@ -1,4 +1,4 @@
-use proof::VerificationContext;
+use crate::proof::VerificationContext;
 
 #[no_mangle]
 pub extern "C" fn librust_verification_ctx_init()  -> *mut VerificationContext {
