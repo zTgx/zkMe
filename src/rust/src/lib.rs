@@ -18,4 +18,4 @@ extern crate bls12_381;
 pub mod prove;
 pub mod verify;
 pub mod proof;
-pub mod tx;
+pub mod circuit;
