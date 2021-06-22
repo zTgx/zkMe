@@ -23,6 +23,9 @@ pub struct Tx {
     pub amount: Amount,
 }
 
+/*
+
+*/
 impl Circuit<bls12_381::Scalar> for Tx {
     fn synthesize<CS: ConstraintSystem<bls12_381::Scalar>>(
         self, 
