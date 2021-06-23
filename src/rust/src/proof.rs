@@ -1,5 +1,11 @@
 use crate::circuit::tx::Tx;
-use bellman::groth16;
+use bellman::{
+    groth16,
+
+    gadgets::{
+        multipack,
+    },
+};
 use bls12_381::Bls12;
 use rand::rngs::OsRng;
 use sha2::{Digest, Sha256};
@@ -14,7 +20,7 @@ impl ProvingContext {
         }
     }
 
-    pub fn spend_proof(&self, inputs: [u8; 33]) -> groth16::Proof<Bls12> {
+    pub fn spend_proof(&self, inputs: [u8; 33]) -> (groth16::Proof<Bls12>, groth16::PreparedVerifyingKey<Bls12>) {
         println!("spend proof.");
 
         let preimage = inputs;
@@ -38,7 +44,7 @@ impl ProvingContext {
         };
 
         // Create a Groth16 proof with our parameters.
-        groth16::create_random_proof(c, &params, &mut OsRng).unwrap()
+        (groth16::create_random_proof(c, &params, &mut OsRng).unwrap(), pvk)
     }
 }
 
@@ -48,5 +54,16 @@ impl VerificationContext {
         VerificationContext{}
     }
 
-    // pub fn verify_proof(&self, pvk: groth16::VerifyingKey, proof: groth16::Proof, inputs: []
+    pub fn verify_proof(&self, pvk: &groth16::PreparedVerifyingKey<Bls12>, proof: &[u8], inputs: &[u8]) -> bool {
+        let proof_data = groth16::Proof::<Bls12>::read(&(unsafe { &*proof })[..]);
+        if let Ok(proof) = proof_data {
+            let hash_bits = multipack::bytes_to_bits_le(&inputs);
+            let inputs = multipack::compute_multipacking(&hash_bits);
+        
+            // Check the proof!
+            return groth16::verify_proof(&pvk, &proof, &inputs).is_ok();    
+        }
+
+        return false;
+    }
 }

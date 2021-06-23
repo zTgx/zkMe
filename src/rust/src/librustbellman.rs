@@ -9,6 +9,7 @@ use std::ffi::CStr;
 use crate::proof::VerificationContext;
 use crate::proof::ProvingContext;
 
+static mut PVK: Option<groth16::PreparedVerifyingKey<Bls12>> = None;
 
 const GROTH_PROOF_SIZE: usize = 
       48 // π_A
@@ -34,12 +35,18 @@ pub extern "C" fn librust_proof(ctx: *mut ProvingContext, inputs: *const c_char,
     let mut a: [u8; 33] = [0u8;33];
     a.copy_from_slice(&s.as_bytes()[0..33]);
 
-    let proof = unsafe { &mut *ctx }.spend_proof(a);
+    let (proof, pvk) = unsafe { &mut *ctx }.spend_proof(a);
 
     // Write proof out to caller
     proof
     .write(&mut (unsafe { &mut *zkproof })[..])
     .expect("should be able to serialize a proof");
+
+    // Write pvk out to caller
+    // use of mutable static is unsafe and requires unsafe function or block
+    unsafe {
+        PVK = Some(pvk);
+    }
 
     true
 }
@@ -66,13 +73,19 @@ pub extern "C" fn librust_verification_ctx_init()  -> *mut VerificationContext {
 }
 
 #[no_mangle]
-pub extern "C" fn librust_verification_check(ctx: *mut VerificationContext, pvk: *const c_char, proof: *const c_char, inputs: *const c_char) -> bool {
-    // unsafe { &mut *ctx }.verify_proof(pvk, proof, inputs);
+pub extern "C" fn librust_verification_check(ctx: *mut VerificationContext, proof: *const c_char, inputs: *const c_char) -> bool {
+    let pvk = unsafe { PVK.as_ref() }.unwrap();
+    let proof = unsafe { CStr::from_ptr(proof) };
+    let inputs = unsafe { CStr::from_ptr(inputs) };
 
-    true
+    unsafe { &mut *ctx }.verify_proof(pvk, proof.to_bytes(), inputs.to_bytes())
 }
 
 #[no_mangle]
-pub extern "C" fn librust_verification_ctx_free(_ctx: *mut VerificationContext) {
+pub extern "C" fn librust_verification_ctx_free(ctx: *mut VerificationContext) {
+    println!("release VerificationContext");
 
+    unsafe {
+        drop(Box::from_raw(ctx));
+    }
 }

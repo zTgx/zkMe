@@ -9,9 +9,13 @@ Prove::initContext() {
 
     unsigned char* zkproof = (unsigned char*)malloc(GROTH_PROOF_SIZE);
     unsigned char* inputs = (unsigned char*)"this is payment address, so let's get started it.";
+
     librust_proof(ctx, inputs, zkproof);
 
-    
+    auto ctx_verify = librust_verification_ctx_init();
+    bool check_ret = librust_verification_check(ctx_verify, (const char*)zkproof, (const char*)inputs);
+    std::cout << "proof check result: " << std::boolalpha << check_ret << std::endl;
+    librust_verification_ctx_free(ctx_verify);
 
     librust_proving_ctx_free(ctx);
 }

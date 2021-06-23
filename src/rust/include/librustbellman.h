@@ -21,7 +21,7 @@ extern "C" {
 
     /// Checks the validity of the
     /// transaction given the binding signature.
-    bool librust_verification_check(void *, unsigned char* pvk, unsigned char* proof, unsigned char* inputs);
+    bool librust_verification_check(void *, const char* proof, const char* inputs);
 
     /// Frees a verification context.
     void librust_verification_ctx_free(void *);
