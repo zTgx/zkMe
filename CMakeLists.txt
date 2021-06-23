@@ -20,8 +20,8 @@ ExternalProject_Add(
     librustbellman
     DOWNLOAD_COMMAND ""
     CONFIGURE_COMMAND ""
-    BUILD_COMMAND cargo build COMMAND cargo build --release
-    UPDATE_COMMAND cargo build COMMAND cargo build --release
+    BUILD_COMMAND cargo build #COMMAND cargo build --release
+    UPDATE_COMMAND cargo build #COMMAND cargo build --release
     BINARY_DIR "${CMAKE_SOURCE_DIR}/src/rust"
     INSTALL_COMMAND ""
     ALWAYS TRUE

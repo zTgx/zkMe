@@ -19,7 +19,7 @@ pub struct Amount {
 pub struct Tx {
     // pub hash: String,
     // pub amount: Amount,
-    pub pay_address: Option<[u8; 2]>,
+    pub pay_address: Option<[u8; 33]>,
 }
 
 /*
@@ -39,7 +39,7 @@ impl Circuit<bls12_381::Scalar> for Tx {
                 .map(|b| Some(b))
                 .collect()
         } else {
-            vec![None; 2 * 8]
+            vec![None; 33 * 8]
         };
 
         // Witness the bits of the pay_address.

@@ -10,7 +10,7 @@ extern "C" {
     void * librust_proving_ctx_init(); 
 
     /// This function constructs a proof given the necessary witness information. 
-    bool librust_proof(void *);
+    bool librust_proof(void *ctx, unsigned char* inputs, unsigned char *zkproof);
 
     // Free a proving context.
     void librust_proving_ctx_free(void *);
@@ -21,7 +21,7 @@ extern "C" {
 
     /// Checks the validity of the
     /// transaction given the binding signature.
-    bool librust_verification_check();
+    bool librust_verification_check(void *, unsigned char* pvk, unsigned char* proof, unsigned char* inputs);
 
     /// Frees a verification context.
     void librust_verification_ctx_free(void *);

@@ -1,4 +1,6 @@
 use crate::proof::VerificationContext;
+use libc::c_char;
+use std::ffi::CStr;
 
 #[no_mangle]
 pub extern "C" fn librust_verification_ctx_init()  -> *mut VerificationContext {
@@ -8,7 +10,9 @@ pub extern "C" fn librust_verification_ctx_init()  -> *mut VerificationContext {
 }
 
 #[no_mangle]
-pub extern "C" fn librust_verification_check() -> bool {
+pub extern "C" fn librust_verification_check(ctx: *mut VerificationContext, pvk: *const c_char, proof: *const c_char, inputs: *const c_char) -> bool {
+    // unsafe { &mut *ctx }.verify_proof(pvk, proof, inputs);
+
     true
 }
 

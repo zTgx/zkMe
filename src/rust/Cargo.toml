@@ -14,6 +14,8 @@ bellman = "0.10"
 bls12_381 = "0.5"
 sha2 = "0.9.5"
 rand = "0.8.4"
+libc = "0.2.97"
+
 
 # https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html
 # Dev-dependencies are not used when compiling a package for building, but are used for compiling tests, examples, and benchmarks.
