@@ -4,8 +4,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-    void hello_world();
-
     /// Creates a proving context. Please free this when you're done.
     void * librust_proving_ctx_init(); 
 
@@ -21,10 +19,12 @@ extern "C" {
 
     /// Checks the validity of the
     /// transaction given the binding signature.
-    bool librust_verification_check(void *, const char* proof, const char* inputs);
+    bool librust_verification_check(void *ctx, const char* proof, const char* inputs);
 
     /// Frees a verification context.
     void librust_verification_ctx_free(void *);
+
+    void hello_world();
 
 #ifdef __cplusplus
 }

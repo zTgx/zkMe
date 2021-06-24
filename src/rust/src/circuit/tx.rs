@@ -9,11 +9,36 @@ use bellman::{
     groth16, Circuit, ConstraintSystem, SynthesisError,
 };
 use sha2::{Digest, Sha256};
+use ff::PrimeField;
 
 pub struct Amount {
     // pub pay_address: Option<[u8; 2]>,
     // pub value: String,
     // pub out_address: String,
+}
+
+fn sha256d<Scalar: PrimeField, CS: ConstraintSystem<Scalar>>(
+    mut cs: CS,
+    data: &[Boolean],
+) -> Result<Vec<Boolean>, SynthesisError> {
+    // Flip endianness of each input byte
+    let input: Vec<_> = data
+        .chunks(8)
+        .map(|c| c.iter().rev())
+        .flatten()
+        .cloned()
+        .collect();
+
+    let mid = sha256(cs.namespace(|| "SHA-256(input)"), &input)?;
+    let res = sha256(cs.namespace(|| "SHA-256(mid)"), &mid)?;
+
+    // Flip endianness of each output byte
+    Ok(res
+        .chunks(8)
+        .map(|c| c.iter().rev())
+        .flatten()
+        .cloned()
+        .collect())
 }
 
 pub struct Tx {
@@ -55,14 +80,7 @@ impl Circuit<bls12_381::Scalar> for Tx {
             .collect::<Result<Vec<_>, _>>()?;
 
         // Compute hash = SHA-256(preimage).
-        let hash = sha256(cs.namespace(|| "SHA-256(mid)"), &preimage_bits)?;
-
-        // let public_input = hash
-        // .chunks(8)
-        // .map(|c| c.iter().rev())
-        // .flatten()
-        // .cloned()
-        // .collect();
+        let hash = sha256d(cs.namespace(|| "SHA-256(preimage)"), &preimage_bits)?;
 
         // Expose the vector of 32 boolean variables as compact public inputs.
         multipack::pack_into_inputs(cs.namespace(|| "pack hash"), &hash)

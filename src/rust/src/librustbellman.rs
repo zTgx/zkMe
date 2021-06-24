@@ -1,13 +1,10 @@
-
-use crate::circuit::tx::Tx;
 use bellman::groth16;
 use bls12_381::Bls12;
-use rand::rngs::OsRng;
-use sha2::{Digest, Sha256};
 use libc::{c_char, c_uchar};
 use std::ffi::CStr;
 use crate::proof::VerificationContext;
 use crate::proof::ProvingContext;
+use std::io::{self, Write};
 
 static mut PVK: Option<groth16::PreparedVerifyingKey<Bls12>> = None;
 
@@ -27,13 +24,13 @@ pub extern "C" fn librust_proving_ctx_init() -> *mut ProvingContext {
 
 #[no_mangle]
 pub extern "C" fn librust_proof(ctx: *mut ProvingContext, inputs: *const c_char, zkproof: *mut [c_uchar; GROTH_PROOF_SIZE]) -> bool {
-
     let s = unsafe {
         CStr::from_ptr(inputs).to_string_lossy().into_owned()
     };
 
     let mut a: [u8; 33] = [0u8;33];
     a.copy_from_slice(&s.as_bytes()[0..33]);
+    println!("inputs : {:?}", a);
 
     let (proof, pvk) = unsafe { &mut *ctx }.spend_proof(a);
 
@@ -41,6 +38,8 @@ pub extern "C" fn librust_proof(ctx: *mut ProvingContext, inputs: *const c_char,
     proof
     .write(&mut (unsafe { &mut *zkproof })[..])
     .expect("should be able to serialize a proof");
+
+    // println!("zkproof : {:?}", zkproof);
 
     // Write pvk out to caller
     // use of mutable static is unsafe and requires unsafe function or block
@@ -61,12 +60,8 @@ pub extern "C" fn librust_proving_ctx_free(ctx: *mut ProvingContext) {
     }
 }
 
-////
-/// 
-/// 
-
 #[no_mangle]
-pub extern "C" fn librust_verification_ctx_init()  -> *mut VerificationContext {
+pub extern "C" fn librust_verification_ctx_init() -> *mut VerificationContext {
     let ctx = Box::new(VerificationContext::new());
 
     Box::into_raw(ctx)
@@ -78,7 +73,10 @@ pub extern "C" fn librust_verification_check(ctx: *mut VerificationContext, proo
     let proof = unsafe { CStr::from_ptr(proof) };
     let inputs = unsafe { CStr::from_ptr(inputs) };
 
-    unsafe { &mut *ctx }.verify_proof(pvk, proof.to_bytes(), inputs.to_bytes())
+    let proof  = proof.to_bytes();
+    let inputs = inputs.to_bytes();
+
+    unsafe { &mut *ctx }.verify_proof(pvk, proof, inputs)
 }
 
 #[no_mangle]
@@ -88,4 +86,9 @@ pub extern "C" fn librust_verification_ctx_free(ctx: *mut VerificationContext) {
     unsafe {
         drop(Box::from_raw(ctx));
     }
+}
+
+#[no_mangle]
+pub extern "C" fn hello_world() {
+    println!("Hello world from Bellman.");
 }

@@ -1,11 +1,8 @@
-#include <rust/include/librustbellman.h>
 #include <verifier.h>
 #include <transaction.h>
 #include <iostream>
 
 int main(int argc, char** argv) {
-    hello_world();
-
     // transaction needed to be verified
     auto tx = Transaction::Mock();
 
