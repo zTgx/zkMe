@@ -10,11 +10,16 @@ use bls12_381::Bls12;
 use rand::rngs::OsRng;
 use sha2::{Digest, Sha256};
 
+// https://doc.rust-lang.org/std/mem/fn.size_of.html
+// use std::mem;
+
 pub struct ProvingContext {
     pub anno: String,
 }
 impl ProvingContext {
     pub fn new() -> ProvingContext {
+        // println!("size of: {}", mem::size_of::<groth16::Proof<Bls12>>());
+
         ProvingContext{
             anno: "ProvingContext".to_string()
         }
@@ -102,31 +107,17 @@ impl VerificationContext {
         VerificationContext{}
     }
 
-    pub fn verify_proof(&self, pvk: &groth16::PreparedVerifyingKey<Bls12>, proof: &[u8], inputs: &[u8]) -> bool {
-        println!("----------");
+    pub fn verify_proof(&self, pvk: &groth16::PreparedVerifyingKey<Bls12>, zkproof: groth16::Proof<Bls12>, inputs: &[u8]) -> bool {
+        println!("### verify_proof ###");
 
-        println!("proof data: {:?}", proof);
+        let mut a: [u8; 33] = [0u8;33];
+        a.copy_from_slice(&inputs[0..33]);
         
-        let proof_data = groth16::Proof::read( &*proof );
-        if let Ok(proof) = proof_data {            
-            let mut a: [u8; 33] = [0u8;33];
-            a.copy_from_slice(&inputs[0..33]);
-            
-            let hash = Sha256::digest(&Sha256::digest(&a));
-
-            let hash_bits = multipack::bytes_to_bits_le(&hash);
-            let inputs = multipack::compute_multipacking(&hash_bits);
-        
-            // Check the proof!
-            let check_res = groth16::verify_proof(&pvk, &proof, &inputs).is_ok();
-            println!("check proof result: {}", check_res);
-            return check_res;
-        } else {
-            println!("read proof error.");
-        }
-
-        println!("is false");
-
-        false
+        let hash = Sha256::digest(&Sha256::digest(&a));
+        let hash_bits = multipack::bytes_to_bits_le(&hash);
+        let inputs = multipack::compute_multipacking(&hash_bits);
+    
+        // Check the proof!
+        groth16::verify_proof(&pvk, &zkproof, &inputs).is_ok()
     }
 }

@@ -14,12 +14,12 @@ Prove::initContext() {
     bool proof_ret = librust_proof(ctx, inputs, zkproof);
     std::cout << "proof ret: " << std::boolalpha << proof_ret << std::endl;
 
-    std::vector<unsigned char> proof_vec (zkproof, zkproof + sizeof(zkproof) / sizeof(unsigned char) );
+    // std::vector<unsigned char> proof_vec (zkproof, zkproof + sizeof(zkproof) / sizeof(unsigned char) );
 
-    for (auto& el : proof_vec)
-        printf("%02hhx", el);
+    // for (auto& el : proof_vec)
+    //     printf("%02hhx", el);
 
-    std::cout << '\n';
+    // std::cout << '\n';
 
     librust_proving_ctx_free(ctx);
 
