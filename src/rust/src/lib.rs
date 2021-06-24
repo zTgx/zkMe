@@ -12,3 +12,4 @@ extern crate bls12_381;
 pub mod librustbellman;
 pub mod proof;
 pub mod circuit;
+pub mod utils;

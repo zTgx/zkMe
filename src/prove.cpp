@@ -2,6 +2,7 @@
 #include <rust/include/librustbellman.h>
 #include <iostream>
 #include <proof.h>
+#include <vector>
 
 void
 Prove::initContext() {
@@ -12,8 +13,14 @@ Prove::initContext() {
 
     bool proof_ret = librust_proof(ctx, inputs, zkproof);
     std::cout << "proof ret: " << std::boolalpha << proof_ret << std::endl;
-    std::cout << "proof : " << zkproof << std::endl;
-    
+
+    std::vector<unsigned char> proof_vec (zkproof, zkproof + sizeof(zkproof) / sizeof(unsigned char) );
+
+    for (auto& el : proof_vec)
+        printf("%02hhx", el);
+
+    std::cout << '\n';
+
     librust_proving_ctx_free(ctx);
 
     auto ctx_verify = librust_verification_ctx_init();

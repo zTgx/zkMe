@@ -49,6 +49,7 @@ impl Circuit<bls12_381::Scalar> for Tx {
         let bit_values = if let Some(pay_address) = self.pay_address {
             pay_address
                 .into_iter()
+                // .iter().cloned()
                 .map(|byte| (0..8).map(move |i| (byte >> i) & 1u8 == 1u8))
                 .flatten()
                 .map(|b| Some(b))

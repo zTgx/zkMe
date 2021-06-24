@@ -4,6 +4,7 @@ use libc::{c_char, c_uchar};
 use std::ffi::CStr;
 use crate::proof::VerificationContext;
 use crate::proof::ProvingContext;
+use crate::utils::timelapse::TimeElapse;
 
 static mut PVK: Option<groth16::PreparedVerifyingKey<Bls12>> = None;
 
@@ -28,14 +29,17 @@ pub extern "C" fn librust_proof(ctx: *mut ProvingContext, inputs: *const c_char,
     a.copy_from_slice(&s.as_bytes()[0..33]);
     println!("inputs : {:?}", a);
 
+    let now = TimeElapse::new();
+
     let (proof, pvk) = unsafe { &mut *ctx }.spend_proof(a);
 
+    let elapsed = now.elapsed();
+    println!("build proof consume time : {} secs", elapsed);
+ 
     // Write proof out to caller
     proof
     .write(&mut (unsafe { &mut *zkproof })[..])
     .expect("should be able to serialize a proof");
-
-    // println!("zkproof : {:?}", zkproof);
 
     // Write pvk out to caller
     // use of mutable static is unsafe and requires unsafe function or block
@@ -69,7 +73,15 @@ pub extern "C" fn librust_verification_check(ctx: *mut VerificationContext, proo
     let proof  = proof.to_bytes();
     let inputs = inputs.to_bytes();
 
-    unsafe { &mut *ctx }.verify_proof(pvk, proof, inputs)
+    //https://doc.rust-lang.org/std/time/struct.SystemTime.html
+    let now = TimeElapse::new();
+
+    let res = unsafe { &mut *ctx }.verify_proof(pvk, proof, inputs);
+
+    let elapsed = now.elapsed();
+    println!("verify proof consume time : {} secs", elapsed);
+
+    res
 }
 
 #[no_mangle]

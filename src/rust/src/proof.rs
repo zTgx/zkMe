@@ -105,6 +105,8 @@ impl VerificationContext {
     pub fn verify_proof(&self, pvk: &groth16::PreparedVerifyingKey<Bls12>, proof: &[u8], inputs: &[u8]) -> bool {
         println!("----------");
 
+        println!("proof data: {:?}", proof);
+        
         let proof_data = groth16::Proof::read( &*proof );
         if let Ok(proof) = proof_data {            
             let mut a: [u8; 33] = [0u8;33];
@@ -115,9 +117,10 @@ impl VerificationContext {
             let hash_bits = multipack::bytes_to_bits_le(&hash);
             let inputs = multipack::compute_multipacking(&hash_bits);
         
-            println!("is ok");
             // Check the proof!
-            return groth16::verify_proof(&pvk, &proof, &inputs).is_ok();    
+            let check_res = groth16::verify_proof(&pvk, &proof, &inputs).is_ok();
+            println!("check proof result: {}", check_res);
+            return check_res;
         } else {
             println!("read proof error.");
         }
