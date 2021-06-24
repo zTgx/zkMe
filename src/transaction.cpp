@@ -6,6 +6,7 @@
 #include <streambuf>
 #include <rust/include/librustbellman.h>
 #include <prove.h>
+#include <crypto/hash.h>
 
 RawTransaction
 RawTransaction::Mock() {
@@ -16,8 +17,9 @@ RawTransaction::Mock() {
     raw.out_address = uint256S("out_address_B");
     raw.value = uint256S("value");
 
+    std::string v = "rawTransaction";
 
-    std::cout << "mock uint256: " << uint256S("ok").ToString() << std::endl;
+    std::cout << "hash uint256: " << Hash(v.begin(), v.end()).ToString() << std::endl;
     std::cout << "mock uint256: " << uint256S("ok").ToString() << std::endl;
 
     return raw;
@@ -37,7 +39,7 @@ RawTransaction::data(std::vector<char>& v) {
     for(auto& i : v) {
         std::cout << "* : " << i;
     }
-    
+
     std::cout << "* : " << v.data() << std::endl;
 }
 

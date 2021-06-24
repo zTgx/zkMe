@@ -9,8 +9,13 @@ INCLUDE_DIRECTORIES("./src/utils")
 
 AUX_SOURCE_DIRECTORY(./src DIR_MAIN_SRCS)
 AUX_SOURCE_DIRECTORY(./src/utils DIR_MAIN_UTILS_SRCS)
+AUX_SOURCE_DIRECTORY(./src/crypto DIR_MAIN_CRYPTO_SRCS)
 
-ADD_EXECUTABLE(${PROJECTNAME} ${DIR_MAIN_SRCS} ${DIR_MAIN_UTILS_SRCS})
+ADD_EXECUTABLE(${PROJECTNAME} 
+                    ${DIR_MAIN_SRCS} 
+                    ${DIR_MAIN_UTILS_SRCS}
+                    ${DIR_MAIN_CRYPTO_SRCS}
+                    )
 
 # Enable ExternalProject CMake module
 include(ExternalProject)
