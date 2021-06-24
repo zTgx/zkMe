@@ -108,8 +108,6 @@ impl VerificationContext {
     }
 
     pub fn verify_proof(&self, pvk: &groth16::PreparedVerifyingKey<Bls12>, zkproof: groth16::Proof<Bls12>, inputs: &[u8]) -> bool {
-        println!("### verify_proof ###");
-
         let mut a: [u8; 33] = [0u8;33];
         a.copy_from_slice(&inputs[0..33]);
         

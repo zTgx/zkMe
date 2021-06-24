@@ -21,6 +21,8 @@ pub extern "C" fn librust_proving_ctx_init() -> *mut ProvingContext {
 
 #[no_mangle]
 pub extern "C" fn librust_proof(ctx: *mut ProvingContext, inputs: *const c_char, zkproof: *mut [c_uchar; GROTH_PROOF_SIZE]) -> bool {
+    println!("\nstarted build proof...");
+
     let s = unsafe {
         CStr::from_ptr(inputs).to_string_lossy().into_owned()
     };
@@ -65,11 +67,11 @@ pub extern "C" fn librust_verification_ctx_init() -> *mut VerificationContext {
 
 #[no_mangle]
 pub extern "C" fn librust_verification_check(ctx: *mut VerificationContext, zkproof: *const [c_uchar; GROTH_PROOF_SIZE], inputs: *const c_char) -> bool {
+    println!("\nstarted verification check...");
+
     let pvk = unsafe { PVK.as_ref() }.unwrap();
-    // let proof = unsafe { CStr::from_ptr(proof) };
     let inputs = unsafe { CStr::from_ptr(inputs) };
 
-    // let proof  = proof.to_bytes();
     let inputs = inputs.to_bytes();
 
     // Deserialize the proof
@@ -80,9 +82,7 @@ pub extern "C" fn librust_verification_check(ctx: *mut VerificationContext, zkpr
 
     //https://doc.rust-lang.org/std/time/struct.SystemTime.html
     let now = TimeElapse::new();
-
     let res = unsafe { &mut *ctx }.verify_proof(pvk, zkproof, inputs);
-
     let elapsed = now.elapsed();
     println!("verify proof consume time : {} secs", elapsed);
 
