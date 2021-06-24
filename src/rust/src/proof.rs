@@ -34,7 +34,7 @@ impl ProvingContext {
         let pvk = groth16::prepare_verifying_key(&params.vk);
 
         // Pick a preimage and compute its hash.
-        let hash = Sha256::digest(&Sha256::digest(&preimage));
+        // let hash = Sha256::digest(&Sha256::digest(&preimage));
 
         // Create an instance of our circuit (with the preimage as a witness).
         let c = Tx {

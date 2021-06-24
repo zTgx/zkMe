@@ -4,21 +4,17 @@ use libc::{c_char, c_uchar};
 use std::ffi::CStr;
 use crate::proof::VerificationContext;
 use crate::proof::ProvingContext;
-use std::io::{self, Write};
 
 static mut PVK: Option<groth16::PreparedVerifyingKey<Bls12>> = None;
 
 const GROTH_PROOF_SIZE: usize = 
-      48 // π_A
-    + 96 // π_B
+      48  // π_A
+    + 96  // π_B
     + 48; // π_C
 
 #[no_mangle]
 pub extern "C" fn librust_proving_ctx_init() -> *mut ProvingContext {
-    println!("init proving context");
-
     let ctx = Box::new(ProvingContext::new());
-
     Box::into_raw(ctx)
 }
 
@@ -53,8 +49,6 @@ pub extern "C" fn librust_proof(ctx: *mut ProvingContext, inputs: *const c_char,
 // https://doc.rust-lang.org/std/primitive.pointer.html#:~:text=unsafe%20%7B%0A%20%20%20%20drop(Box%3A%3Afrom_raw(my_speed))%3B%0A%7D
 #[no_mangle]
 pub extern "C" fn librust_proving_ctx_free(ctx: *mut ProvingContext) {
-    println!("release proving context");
-
     unsafe {
         drop(Box::from_raw(ctx));
     }
@@ -63,7 +57,6 @@ pub extern "C" fn librust_proving_ctx_free(ctx: *mut ProvingContext) {
 #[no_mangle]
 pub extern "C" fn librust_verification_ctx_init() -> *mut VerificationContext {
     let ctx = Box::new(VerificationContext::new());
-
     Box::into_raw(ctx)
 }
 
@@ -81,8 +74,6 @@ pub extern "C" fn librust_verification_check(ctx: *mut VerificationContext, proo
 
 #[no_mangle]
 pub extern "C" fn librust_verification_ctx_free(ctx: *mut VerificationContext) {
-    println!("release VerificationContext");
-
     unsafe {
         drop(Box::from_raw(ctx));
     }

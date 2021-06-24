@@ -1,21 +1,12 @@
-
-
 use bellman::{
     gadgets::{
         boolean::{AllocatedBit, Boolean},
         multipack,
         sha256::sha256,
     },
-    groth16, Circuit, ConstraintSystem, SynthesisError,
+    Circuit, ConstraintSystem, SynthesisError,
 };
-use sha2::{Digest, Sha256};
 use ff::PrimeField;
-
-pub struct Amount {
-    // pub pay_address: Option<[u8; 2]>,
-    // pub value: String,
-    // pub out_address: String,
-}
 
 fn sha256d<Scalar: PrimeField, CS: ConstraintSystem<Scalar>>(
     mut cs: CS,
@@ -41,15 +32,14 @@ fn sha256d<Scalar: PrimeField, CS: ConstraintSystem<Scalar>>(
         .collect())
 }
 
+// https://docs.rs/bellman/0.10.0/src/bellman/lib.rs.html#413-419
+// The preimage must have a
+// fixed length known in advance (because the circuit parameters will depend on
+// it), but can otherwise have any value.
 pub struct Tx {
-    // pub hash: String,
-    // pub amount: Amount,
     pub pay_address: Option<[u8; 33]>,
 }
 
-/*
-
-*/
 impl Circuit<bls12_381::Scalar> for Tx {
     fn synthesize<CS: ConstraintSystem<bls12_381::Scalar>>(
         self, 
