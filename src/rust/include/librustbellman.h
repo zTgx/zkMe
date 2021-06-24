@@ -8,7 +8,7 @@ extern "C" {
     void * librust_proving_ctx_init(); 
 
     /// This function constructs a proof given the necessary witness information. 
-    bool librust_proof(void *ctx, unsigned char* inputs, unsigned char *zkproof);
+    bool librust_proof(void *ctx, const char* inputs, unsigned char *zkproof);
 
     // Free a proving context.
     void librust_proving_ctx_free(void *);

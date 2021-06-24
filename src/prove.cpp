@@ -6,26 +6,18 @@
 
 void
 Prove::initContext() {
+    std::vector<unsigned char> zkproof(GROTH_PROOF_SIZE);
+    const std::string inputs("this is payment address, so let's get started it.");
+
+    // build groth16 proof
     auto ctx = librust_proving_ctx_init();
-
-    unsigned char* zkproof = (unsigned char*)malloc(GROTH_PROOF_SIZE);
-    unsigned char* inputs = (unsigned char*)"this is payment address, so let's get started it.";
-
-    bool proof_res = librust_proof(ctx, inputs, zkproof);
+    bool proof_res = librust_proof(ctx, inputs.data(), zkproof.data());
     std::cout << "proof res: " << std::boolalpha << proof_res << std::endl;
-
-    // std::vector<unsigned char> proof_vec (zkproof, zkproof + sizeof(zkproof) / sizeof(unsigned char) );
-
-    // for (auto& el : proof_vec)
-    //     printf("%02hhx", el);
-
-    // std::cout << '\n';
-
     librust_proving_ctx_free(ctx);
 
+    // verify proof
     auto ctx_verify = librust_verification_ctx_init();
-    bool check_ret = librust_verification_check(ctx_verify, (const char*)zkproof, (const char*)inputs);
-    std::cout << "verification check result: " << std::boolalpha << check_ret << std::endl;
+    bool check_ret = librust_verification_check(ctx_verify, (const char*)zkproof.data(), inputs.data());
+    std::cout << "verification check res: " << std::boolalpha << check_ret << std::endl;
     librust_verification_ctx_free(ctx_verify);
-
 }
