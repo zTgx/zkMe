@@ -1,6 +1,6 @@
 use bellman::groth16;
 use bls12_381::Bls12;
-use libc::{c_char, c_uchar};
+use libc::c_uchar;
 use crate::proof::VerificationContext;
 use crate::proof::ProvingContext;
 use crate::utils::timelapse::TimeElapse;
@@ -21,18 +21,6 @@ pub extern "C" fn librust_proving_ctx_init() -> *mut ProvingContext {
 #[no_mangle]
 pub extern "C" fn librust_proof(ctx: *mut ProvingContext, inputs: *const [c_uchar; 32], zkproof: *mut [c_uchar; GROTH_PROOF_SIZE]) -> bool {
     println!("\nstarted build proof...");
-
-    // let s = unsafe {
-    //     CStr::from_ptr(inputs).to_string_lossy().into_owned()
-    // };
-
-    // println!("s: {:?}", unsafe { *inputs });
-
-    // let mut a: [u8; 33] = [0u8;33];
-    // a.copy_from_slice(&s.as_bytes()[0..33]);
-    // a.copy_from_slice(unsafe { &*inputs });
-
-    // println!("a: {:?}", a);
 
     let now = TimeElapse::new();
 
@@ -74,9 +62,6 @@ pub extern "C" fn librust_verification_check(ctx: *mut VerificationContext, zkpr
     println!("\nstarted verification check...");
 
     let pvk = unsafe { PVK.as_ref() }.unwrap();
-    // let inputs = unsafe { CStr::from_ptr(inputs) };
-
-    // let inputs = inputs.to_bytes();
 
     // Deserialize the proof
     let zkproof = match groth16::Proof::read(&(unsafe { &*zkproof })[..]) {
