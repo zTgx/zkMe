@@ -1,3 +1,5 @@
+#pragma once
+
 #include <utils/uint256.h>
 #include "sha256.h"
 #include "ripemd160.h"

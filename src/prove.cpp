@@ -6,33 +6,32 @@
 #include <cstring>
 
 void
-Prove::initContext() {
-    std::vector<unsigned char> zkproof(GROTH_PROOF_SIZE);
-    const std::string inputs("this is payment address, so let's get started it.");
-
+Prove::build() {
     // build groth16 proof
+    std::vector<unsigned char> zkproof(GROTH_PROOF_SIZE);
+    std::string inputs = this->inputs.ToString();
+
     auto ctx = librust_proving_ctx_init();
-    bool proof_res = librust_proof(ctx, inputs.data(), zkproof.data());
+    bool proof_res = librust_proof(ctx, (const char*)inputs.data(), zkproof.data());
     std::cout << "proof res: " << std::boolalpha << proof_res << std::endl;
     librust_proving_ctx_free(ctx);
 
-    // verify proof
-    auto ctx_verify = librust_verification_ctx_init();
-    bool check_ret = librust_verification_check(ctx_verify, (const char*)zkproof.data(), inputs.data());
-    std::cout << "verification check res: " << std::boolalpha << check_ret << std::endl;
-    librust_verification_ctx_free(ctx_verify);
+    for(int i=0;i<zkproof.size();i++) {
+        this->gpf[i] = zkproof[i];
+    }
 }
 
-std::vector<unsigned char>
-Prove::buildProof(const char* inputss) {
-    std::vector<unsigned char> zkproof(GROTH_PROOF_SIZE);
-    const std::string inputs("this is payment address, so let's get started it.");
+void 
+Prove::setInputs(uint256& inputs) {
+    this->inputs = inputs;
+}
 
-    // build groth16 proof
-    auto ctx = librust_proving_ctx_init();
-    bool proof_res = librust_proof(ctx, inputs.data(), zkproof.data());
-    std::cout << "proof res: " << std::boolalpha << proof_res << std::endl;
-    librust_proving_ctx_free(ctx);
+uint256
+Prove::getInputs() {
+    return this->inputs;
+}
 
-    return zkproof;
+GrothProof 
+Prove::getProof() {
+    return this->gpf;
 }

@@ -4,10 +4,12 @@
 
 int main(int argc, char** argv) {
     // transaction needed to be verified
-    auto tx = Transaction::Mock();
+    auto tx = RawTransaction::Mock();
+    auto msg = Message::Mock();
+    msg.build(tx);
 
     // verify
-    if (!Verifier::Verify(tx)) {
+    if (!Verifier::Verify(msg)) {
         std::cout << "verify failed." << std::endl;
         return -1;
     }

@@ -13,5 +13,5 @@ class Verifier {
         Verifier& operator=(Verifier&&);
     
     public:
-        static bool Verify(Transaction&);
+        static bool Verify(Message&);
 };

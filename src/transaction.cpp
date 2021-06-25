@@ -12,61 +12,27 @@ RawTransaction
 RawTransaction::Mock() {
     RawTransaction raw;
 
-    raw.txHash = uint256S("rawTransactionHash");
-    raw.spend_address = uint256S("spend_address_A");
-    raw.out_address = uint256S("out_address_B");
-    raw.value = uint256S("value");
+    std::string spend_address{"spend_address_A"};
+    raw.spend_address = Hash(spend_address.begin(), spend_address.end());
 
-    std::string v = "rawTransaction";
+    std::string out_address{"out_address_B"};
+    raw.out_address = Hash(out_address.begin(), out_address.end());
 
-    std::cout << "hash uint256: " << Hash(v.begin(), v.end()).ToString() << std::endl;
-    std::cout << "mock uint256: " << uint256S("ok").ToString() << std::endl;
+    std::string value{"value"};
+    raw.value = Hash(value.begin(), value.end());
+
+    raw.txHash = raw.calcTxHash();
+    std::cout << "raw tx hash: " << raw.txHash.ToString() << std::endl;
 
     return raw;
 }
 
-void
-RawTransaction::data(std::vector<char>& v) {
-    std::cout << "spend_address : " << this->spend_address.ToString() << std::endl;
-
-    std::copy( this->spend_address.begin(), this->spend_address.end(), std::back_inserter(v));
-    std::copy( this->out_address.begin(), this->out_address.end(), std::back_inserter(v));
-    std::copy( this->value.begin(), this->value.end(), std::back_inserter(v));
-    std::copy( this->txHash.begin(), this->txHash.end(), std::back_inserter(v));
-
-    std::cout << "sizeof d: " << v.size() << std::endl;
-
-    for(auto& i : v) {
-        std::cout << "* : " << i;
-    }
-
-    std::cout << "* : " << v.data() << std::endl;
-}
-
-Transaction 
-Transaction::Mock() {
-
-    // Prove p;
-    // p.initContext();
-    
-    RawTransaction raw = RawTransaction::Mock();
-    auto tx = Transaction();
-    tx.buildGroth16Proof(raw);
-
-    return tx;
-}
-
 void 
-Transaction::buildGroth16Proof(RawTransaction& raw) {
-    this->raw = raw;
-
-    std::vector<char> v;
-    raw.data(v);
-
+Message::build(RawTransaction& raw) {
     Prove p;
-    auto zkproof = p.buildProof(v.data());
-    // std::copy(zkproof.begin(), zkproof.end(), this->gpf);
-    for(int i=0;i<zkproof.size();i++) {
-        this->gpf[i] = zkproof[i];
-    }
+    p.setInputs(raw.txHash);
+    p.build();
+    
+    *const_cast<uint256*>(&this->txHash) = p.getInputs();
+    this->gpf    = p.getProof();
 }
