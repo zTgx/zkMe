@@ -5,7 +5,6 @@
 #include <ostream>
 #include <streambuf>
 #include <rust/include/librustbellman.h>
-#include <prove.h>
 #include <crypto/hash.h>
 
 RawTransaction
@@ -28,11 +27,7 @@ RawTransaction::Mock() {
 }
 
 void 
-Message::build(RawTransaction& raw) {
-    Prove p;
-    p.setInputs(raw.txHash);
-    p.build();
-    
-    *const_cast<uint256*>(&this->txHash) = p.getInputs();
-    this->gpf    = p.getProof();
+Message::build(uint256& inputs, GrothProof& gpf) {    
+    *const_cast<uint256*>(&this->txHash) = inputs;
+    this->gpf    = gpf;
 }

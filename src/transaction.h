@@ -37,5 +37,5 @@ class Message {
         }
     
     public:
-        void build(RawTransaction&);
+        void build(uint256&, GrothProof&);
 };

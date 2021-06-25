@@ -9,8 +9,6 @@ bool Verifier::Verify(Message& msg) {
     const uint256 inputs = msg.txHash;
     std::string input = inputs.ToString();
 
-    std::cout << "verify inputs: " << inputs.ToString() << std::endl;
-
     auto ctx_verify = librust_verification_ctx_init();
     bool check_ret = librust_verification_check(ctx_verify, (const char*)zkproof.data(), (const char*)input.data());
     std::cout << "verification check res: " << std::boolalpha << check_ret << std::endl;

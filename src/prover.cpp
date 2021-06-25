@@ -1,12 +1,20 @@
-#include <prove.h>
+#include <Prover.h>
 #include <rust/include/librustbellman.h>
 #include <iostream>
 #include <proof.h>
 #include <vector>
 #include <cstring>
+#include <transaction.h>
+
+Prover 
+Prover::inst(uint256& inputs) {
+    Prover p(inputs);
+    p.build();
+    return p;
+}
 
 void
-Prove::build() {
+Prover::build() {
     // build groth16 proof
     std::vector<unsigned char> zkproof(GROTH_PROOF_SIZE);
     std::string inputs = this->inputs.ToString();
@@ -21,17 +29,12 @@ Prove::build() {
     }
 }
 
-void 
-Prove::setInputs(uint256& inputs) {
-    this->inputs = inputs;
+Message
+Prover::BuildMessage() {
+    Message msg = Message::Mock();
+
+    msg.build(this->inputs, this->gpf);
+
+    return msg;
 }
 
-uint256
-Prove::getInputs() {
-    return this->inputs;
-}
-
-GrothProof 
-Prove::getProof() {
-    return this->gpf;
-}
