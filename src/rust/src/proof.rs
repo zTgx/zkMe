@@ -25,13 +25,13 @@ impl ProvingContext {
         }
     }
 
-    pub fn spend_proof(&self, inputs: [u8; 33]) -> (groth16::Proof<Bls12>, groth16::PreparedVerifyingKey<Bls12>) {
-        let preimage = inputs;
+    pub fn spend_proof(&self, inputs: [u8; 32]) -> (groth16::Proof<Bls12>, groth16::PreparedVerifyingKey<Bls12>) {
+        // let preimage = inputs;
 
         // Create parameters for our circuit. In a production deployment these would
         // be generated securely using a multiparty computation.
         let params = {
-            let c = Tx { pay_address: None };
+            let c = Tx { hash: None };
             groth16::generate_random_parameters::<Bls12, _, _>(c, &mut OsRng).unwrap()
         };
 
@@ -43,7 +43,7 @@ impl ProvingContext {
 
         // Create an instance of our circuit (with the preimage as a witness).
         let c = Tx {
-            pay_address: Some(preimage),
+            hash: Some(inputs),
         };
 
         // let hash_bits = multipack::bytes_to_bits_le(&hash);
@@ -107,11 +107,11 @@ impl VerificationContext {
         VerificationContext{}
     }
 
-    pub fn verify_proof(&self, pvk: &groth16::PreparedVerifyingKey<Bls12>, zkproof: groth16::Proof<Bls12>, inputs: &[u8]) -> bool {
-        let mut a: [u8; 33] = [0u8;33];
-        a.copy_from_slice(&inputs[0..33]);
+    pub fn verify_proof(&self, pvk: &groth16::PreparedVerifyingKey<Bls12>, zkproof: groth16::Proof<Bls12>, inputs: &[u8; 32]) -> bool {
+        // let mut a: [u8; 33] = [0u8;33];
+        // a.copy_from_slice(&inputs[0..33]);
         
-        let hash = Sha256::digest(&Sha256::digest(&a));
+        let hash = Sha256::digest(&Sha256::digest(inputs));
         let hash_bits = multipack::bytes_to_bits_le(&hash);
         let inputs = multipack::compute_multipacking(&hash_bits);
     

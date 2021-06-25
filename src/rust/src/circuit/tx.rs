@@ -37,7 +37,7 @@ fn sha256d<Scalar: PrimeField, CS: ConstraintSystem<Scalar>>(
 // fixed length known in advance (because the circuit parameters will depend on
 // it), but can otherwise have any value.
 pub struct Tx {
-    pub pay_address: Option<[u8; 33]>,
+    pub hash: Option<[u8; 32]>,
 }
 
 impl Circuit<bls12_381::Scalar> for Tx {
@@ -46,8 +46,8 @@ impl Circuit<bls12_381::Scalar> for Tx {
         cs: &mut CS
     ) -> Result<(), SynthesisError> {
 
-        let bit_values = if let Some(pay_address) = self.pay_address {
-            pay_address
+        let bit_values = if let Some(hash) = self.hash {
+            hash
                 // .into_iter()
                 .iter().cloned()
                 .map(|byte| (0..8).map(move |i| (byte >> i) & 1u8 == 1u8))
@@ -55,10 +55,10 @@ impl Circuit<bls12_381::Scalar> for Tx {
                 .map(|b| Some(b))
                 .collect()
         } else {
-            vec![None; 33 * 8]
+            vec![None; 32 * 8]
         };
 
-        // Witness the bits of the pay_address.
+        // Witness the bits of the hash.
         let preimage_bits = bit_values
             .into_iter()
             .enumerate()

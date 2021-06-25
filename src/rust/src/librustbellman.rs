@@ -1,7 +1,6 @@
 use bellman::groth16;
 use bls12_381::Bls12;
 use libc::{c_char, c_uchar};
-use std::ffi::CStr;
 use crate::proof::VerificationContext;
 use crate::proof::ProvingContext;
 use crate::utils::timelapse::TimeElapse;
@@ -20,19 +19,24 @@ pub extern "C" fn librust_proving_ctx_init() -> *mut ProvingContext {
 }
 
 #[no_mangle]
-pub extern "C" fn librust_proof(ctx: *mut ProvingContext, inputs: *const c_char, zkproof: *mut [c_uchar; GROTH_PROOF_SIZE]) -> bool {
+pub extern "C" fn librust_proof(ctx: *mut ProvingContext, inputs: *const [c_uchar; 32], zkproof: *mut [c_uchar; GROTH_PROOF_SIZE]) -> bool {
     println!("\nstarted build proof...");
 
-    let s = unsafe {
-        CStr::from_ptr(inputs).to_string_lossy().into_owned()
-    };
+    // let s = unsafe {
+    //     CStr::from_ptr(inputs).to_string_lossy().into_owned()
+    // };
 
-    let mut a: [u8; 33] = [0u8;33];
-    a.copy_from_slice(&s.as_bytes()[0..33]);
+    // println!("s: {:?}", unsafe { *inputs });
+
+    // let mut a: [u8; 33] = [0u8;33];
+    // a.copy_from_slice(&s.as_bytes()[0..33]);
+    // a.copy_from_slice(unsafe { &*inputs });
+
+    // println!("a: {:?}", a);
 
     let now = TimeElapse::new();
 
-    let (proof, pvk) = unsafe { &mut *ctx }.spend_proof(a);
+    let (proof, pvk) = unsafe { &mut *ctx }.spend_proof(unsafe { *inputs });
 
     let elapsed = now.elapsed();
     println!("build proof consume time : {} secs", elapsed);
@@ -66,13 +70,13 @@ pub extern "C" fn librust_verification_ctx_init() -> *mut VerificationContext {
 }
 
 #[no_mangle]
-pub extern "C" fn librust_verification_check(ctx: *mut VerificationContext, zkproof: *const [c_uchar; GROTH_PROOF_SIZE], inputs: *const c_char) -> bool {
+pub extern "C" fn librust_verification_check(ctx: *mut VerificationContext, zkproof: *const [c_uchar; GROTH_PROOF_SIZE], inputs: *const [c_uchar; 32]) -> bool {
     println!("\nstarted verification check...");
 
     let pvk = unsafe { PVK.as_ref() }.unwrap();
-    let inputs = unsafe { CStr::from_ptr(inputs) };
+    // let inputs = unsafe { CStr::from_ptr(inputs) };
 
-    let inputs = inputs.to_bytes();
+    // let inputs = inputs.to_bytes();
 
     // Deserialize the proof
     let zkproof = match groth16::Proof::read(&(unsafe { &*zkproof })[..]) {
@@ -82,7 +86,7 @@ pub extern "C" fn librust_verification_check(ctx: *mut VerificationContext, zkpr
 
     //https://doc.rust-lang.org/std/time/struct.SystemTime.html
     let now = TimeElapse::new();
-    let res = unsafe { &mut *ctx }.verify_proof(pvk, zkproof, inputs);
+    let res = unsafe { &mut *ctx }.verify_proof(pvk, zkproof, unsafe { &*inputs });
     let elapsed = now.elapsed();
     println!("verify proof consume time : {} secs", elapsed);
 

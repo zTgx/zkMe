@@ -21,7 +21,7 @@ RawTransaction::Mock() {
     raw.value = Hash(value.begin(), value.end());
 
     raw.txHash = raw.calcTxHash();
-    std::cout << "raw tx hash: " << raw.txHash.ToString() << std::endl;
+    std::cout << "raw tx hash: " << raw.txHash.ToString() << "  " << "size : " << raw.txHash.size() << std::endl;
 
     return raw;
 }

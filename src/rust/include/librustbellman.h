@@ -8,7 +8,7 @@ extern "C" {
     void * librust_proving_ctx_init(); 
 
     /// This function constructs a proof given the necessary witness information. 
-    bool librust_proof(void *ctx, const char* inputs, unsigned char *zkproof);
+    bool librust_proof(void *ctx, const unsigned char* inputs, unsigned char *zkproof);
 
     // Free a proving context.
     void librust_proving_ctx_free(void *);
@@ -19,7 +19,7 @@ extern "C" {
 
     /// Checks the validity of the
     /// transaction given the binding signature.
-    bool librust_verification_check(void *ctx, const char* proof, const char* inputs);
+    bool librust_verification_check(void *ctx, const char* proof, const unsigned char* inputs);
 
     /// Frees a verification context.
     void librust_verification_ctx_free(void *);

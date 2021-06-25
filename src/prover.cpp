@@ -17,10 +17,12 @@ void
 Prover::build() {
     // build groth16 proof
     std::vector<unsigned char> zkproof(GROTH_PROOF_SIZE);
-    std::string inputs = this->inputs.ToString();
+    // std::string inputs = this->inputs.ToString();
+    // std::cout << "inputs size: " << inputs.size() << this->inputs.size() << std::endl;
 
     auto ctx = librust_proving_ctx_init();
-    bool proof_res = librust_proof(ctx, (const char*)inputs.data(), zkproof.data());
+    // bool proof_res = librust_proof(ctx, (const char*)inputs.data(), zkproof.data());
+    bool proof_res = librust_proof(ctx, this->inputs.begin(), zkproof.data());
     std::cout << "proof res: " << std::boolalpha << proof_res << std::endl;
     librust_proving_ctx_free(ctx);
 
