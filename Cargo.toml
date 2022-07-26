@@ -1,0 +1,38 @@
+[package]
+name = "plonky"
+version = "0.1.0"
+authors = ["zTgx <747674262@qq.com>"]
+edition = "2018"
+
+[lib]
+name = "plonky"
+path = "plonky/lib.rs"
+crate-type = ["staticlib"]
+
+[dependencies]
+dusk-plonk = "0.11.0"
+dusk-bls12_381 = {version = "0.9", default-features = false, features = ["groups", "pairings", "endo"]}
+dusk-jubjub = {version = "0.11", default-features = false}
+
+# https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html
+# Dev-dependencies are not used when compiling a package for building, but are used for compiling tests, examples, and benchmarks.
+[dev-dependencies]
+ff = "0.10"
+sha2 = "0.9.5"
+rand = "0.8.4"
+criterion = "0.3"
+tempdir = "0.3"
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+overflow-checks = false
+
+[profile.bench]
+opt-level = 3
+debug = false
+debug-assertions = false
+overflow-checks = false
+lto = true
+incremental = false
+codegen-units = 1

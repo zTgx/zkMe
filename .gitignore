@@ -1,2 +1,4 @@
 my_build
 .vscode
+target
+Cargo.lock
