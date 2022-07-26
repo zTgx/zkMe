@@ -1,7 +1,6 @@
-# bellman-cpp-rust
+# zkMe
 
-[bellman-cpp-rust](https://crates.io/crates/bellman-cpp-rust) is a zk-SNARK example depend on [bellman](https://crates.io/crates/bellman), which
- is a crate for building zk-SNARK circuits.  
+[zkMe](https://github.com/zTgx/zkMe) is a toy. 
  
 ## Supported build tools versions
 g++ 8.4  +   
@@ -18,7 +17,7 @@ make
 
 ## Run
 ```c++
-./example
+./zkme -groth16(plonk)
 ```
 
 ## Credits
