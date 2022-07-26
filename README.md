@@ -9,8 +9,8 @@ rust-toolchain 1.52.0
 
 ## Building
 ```c++
-mkdir build
-cd build
+mkdir my_build
+cd my_build
 cmake -DCMAKE_BUILD_TYPE=Debug ..
 make
 ```

@@ -1,4 +1,4 @@
-#include <Prover.h>
+#include <prover.h>
 #include <rust/include/librustbellman.h>
 #include <iostream>
 #include <proof.h>

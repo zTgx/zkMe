@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <cstddef>
 
 static constexpr size_t GROTH_PROOF_SIZE = (
     48 + // π_A
